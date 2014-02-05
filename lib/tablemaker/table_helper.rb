@@ -1,8 +1,9 @@
 module Tablemaker
   class TableHelper
-    def initialize(context, &block)
+    def initialize(context,table_tag, &block)
       @context = context
       @stack = []
+      @table_tag = table_tag
 
       @root = Tablemaker.column do |r|
         stack(r) do
@@ -38,7 +39,25 @@ module Tablemaker
     end
 
     def to_html(attrs = {})
-      context.content_tag("table", attrs) do
+      if @table_tag
+        context.content_tag("table", attrs) do
+          @root.each_row do |r|
+            s = context.content_tag("tr") do
+              r.each do |c|
+                attrs = {}
+                attrs[:rowspan] = c.real_rows if c.real_rows > 1
+                attrs[:colspan] = c.real_cols if c.real_cols > 1
+                s2 = context.content_tag(c.data[:name], c.data[:opts].merge(attrs)) do
+                  c.data[:text]
+                end
+
+                context.concat(s2)
+              end
+            end
+            context.concat(s)
+          end
+        end
+      else
         @root.each_row do |r|
           s = context.content_tag("tr") do
             r.each do |c|
