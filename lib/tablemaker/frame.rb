@@ -40,6 +40,7 @@ module Tablemaker
     def initialize(parent, idx, data)
       super(parent, idx)
       @data = data
+      @data[:tr_opts] = @data[:opts].delete(:tr_opts) || {}
     end
     def data
       @data

@@ -42,7 +42,8 @@ module Tablemaker
       if @table_tag
         context.content_tag("table", attrs) do
           @root.each_row do |r|
-            s = context.content_tag("tr") do
+            tr_opts = r.first.data[:tr_opts]
+            s = context.content_tag("tr", tr_opts) do
               r.each do |c|
                 attrs = {}
                 attrs[:rowspan] = c.real_rows if c.real_rows > 1
@@ -59,7 +60,8 @@ module Tablemaker
         end
       else
         @root.each_row do |r|
-          s = context.content_tag("tr") do
+          tr_opts = attrs.merge(r.first.data[:tr_opts])
+          s = context.content_tag("tr", tr_opts) do
             r.each do |c|
               attrs = {}
               attrs[:rowspan] = c.real_rows if c.real_rows > 1
